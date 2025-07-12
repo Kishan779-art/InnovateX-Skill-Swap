@@ -60,12 +60,33 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
         return (
             <Card className="flex flex-col h-full bg-card/50 backdrop-blur-md border border-dashed shadow-none">
                 <CardHeader>
-                    <CardTitle className="text-sm font-medium text-muted-foreground">Swap with a deleted user</CardTitle>
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Swap with an unknown user</CardTitle>
                     <Badge variant="destructive">Invalid</Badge>
                 </CardHeader>
                 <CardContent className="flex-grow flex items-center justify-center">
-                    <p className="text-muted-foreground text-sm">This swap can no longer be completed.</p>
+                    <p className="text-muted-foreground text-sm">This swap can no longer be processed.</p>
                 </CardContent>
+                 <CardFooter className="flex justify-end gap-2">
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Delete this swap?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                This will permanently remove this swap from your inbox. This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => onDelete(swap.id)}>Delete</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                </CardFooter>
             </Card>
         );
     }
@@ -93,7 +114,7 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
                     </div>
                     <ArrowRight className="h-5 w-5 text-primary flex-shrink-0" />
                     <div className="flex-1">
-                        <p className="text-xs text-muted-foreground">{isResponder ? 'You Want' : `${otherUser.name} Wants`}</p>
+                        <p className="text-xs text-muted-foreground">{isRequester ? `${otherUser.name} Wants` : 'You Want'}</p>
                         <p className="font-semibold">{swap.wantedSkill}</p>
                     </div>
                 </div>
@@ -130,7 +151,7 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
                         </AlertDialogContent>
                     </AlertDialog>
                 )}
-                 {(swap.status === 'rejected' || swap.status === 'completed') && (
+                 {(swap.status === 'rejected' || swap.status === 'completed' || swap.status === 'accepted') && (
                      <AlertDialog>
                         <AlertDialogTrigger asChild>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">

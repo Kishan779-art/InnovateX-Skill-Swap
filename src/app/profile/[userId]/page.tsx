@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { mockUsers, mockFeedback } from '@/lib/data';
 import type { User, Feedback } from '@/lib/types';
-import { notFound, useRouter } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -148,24 +148,31 @@ export default function PublicProfilePage({ params }: { params: { userId: string
             <div className="space-y-4">
                 {feedback.length > 0 ? feedback.map(fb => {
                     const reviewer = mockUsers.find(u => u.id === fb.reviewerId);
-                    const reviewedForSkill = mockUsers.find(u => u.id === fb.reviewedId)?.skillsWanted[0] || 'a skill';
+                    if (!reviewer) return null; // Skip rendering if reviewer not found
+                    
+                    const reviewedUser = mockUsers.find(u => u.id === fb.reviewedId);
+                    // Find the swap to get the skill, assuming one swap per feedback
+                    const relevantSwap = mockSwaps.find(s => s.id === fb.swapId);
+                    const skillInvolved = relevantSwap ? (relevantSwap.requesterId === reviewer.id ? relevantSwap.wantedSkill : relevantSwap.offeredSkill) : 'a skill';
+
+
                     return (
                     <Card key={fb.id} className="bg-card/50 backdrop-blur-md border border-primary/20">
                         <CardContent className="p-4 flex gap-4">
                             <Avatar>
-                                <AvatarImage src={reviewer?.profilePhotoUrl} />
-                                <AvatarFallback>{getInitials(reviewer?.name || 'U')}</AvatarFallback>
+                                <AvatarImage src={reviewer.profilePhotoUrl} />
+                                <AvatarFallback>{getInitials(reviewer.name)}</AvatarFallback>
                             </Avatar>
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <p className="font-semibold">{reviewer?.name}</p>
+                                    <p className="font-semibold">{reviewer.name}</p>
                                     <div className="flex items-center text-amber-500">
                                         {[...Array(5)].map((_, i) => (
                                             <Star key={i} className={`h-4 w-4 ${i < fb.rating ? 'fill-current' : 'text-gray-600'}`} />
                                         ))}
                                     </div>
                                 </div>
-                                <p className="text-muted-foreground mt-1 text-sm">{`For swap of "${reviewedForSkill}"`}</p>
+                                <p className="text-muted-foreground mt-1 text-sm">{`For swap of "${skillInvolved}"`}</p>
                                 <p className="mt-2">{fb.comment}</p>
                             </div>
                         </CardContent>
