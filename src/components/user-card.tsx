@@ -5,14 +5,12 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Star } from 'lucide-react';
-import { useGlow } from '@/hooks/use-glow';
 
 interface UserCardProps {
   user: User;
 }
 
 export function UserCard({ user }: UserCardProps) {
-  const { ref, style } = useGlow();
 
   const averageRating = user.feedback.length > 0
     ? (user.feedback.reduce((acc, f) => acc + f.rating, 0) / user.feedback.length).toFixed(1)
@@ -27,7 +25,7 @@ export function UserCard({ user }: UserCardProps) {
   };
 
   return (
-    <div ref={ref} style={style} className="glowing-card rounded-lg">
+    <div className="glowing-card">
       <div className="glowing-card-content p-px">
         <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-none shadow-none rounded-[calc(var(--radius)-1px)]">
             <CardHeader className="flex flex-row items-center gap-4 p-4">
