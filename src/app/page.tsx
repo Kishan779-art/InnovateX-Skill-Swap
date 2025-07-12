@@ -176,7 +176,7 @@ export default function Home() {
                   key={user.id}
                   variants={itemVariants}
                   whileInView="visible"
-                  viewport={{ once: false }} // Changed to false to allow re-animation on page change
+                  viewport={{ once: false }}
                 >
                   <UserCard user={user} onRequestSwap={handleRequestSwap} />
                 </motion.div>
