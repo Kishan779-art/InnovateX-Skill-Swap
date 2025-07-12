@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Menu, Share2 } from 'lucide-react';
+import { Menu, BrainCircuit } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 // Mock auth hook - in a real app, this would come from a context or auth library
@@ -65,8 +65,8 @@ export function Header() {
     <header className="bg-background/80 backdrop-blur-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <Share2 className="h-7 w-7 text-primary" />
-          <span className="text-xl font-headline font-bold text-foreground">SkillSwap Connect</span>
+          <BrainCircuit className="h-7 w-7 text-primary" />
+          <span className="text-xl font-headline font-bold text-foreground">Synapse</span>
         </Link>
 
         {isClient && (
@@ -103,8 +103,8 @@ export function Header() {
             <SheetContent side="right" className="bg-background">
               <div className="flex flex-col gap-6 p-6">
                 <Link href="/" onClick={handleLinkClick} className="flex items-center gap-2">
-                    <Share2 className="h-6 w-6 text-primary" />
-                    <span className="font-bold font-headline">SkillSwap Connect</span>
+                    <BrainCircuit className="h-6 w-6 text-primary" />
+                    <span className="font-bold font-headline">Synapse</span>
                 </Link>
                 <nav className="flex flex-col gap-4">
                   {navLinks.map(link => (
