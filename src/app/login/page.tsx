@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { Fingerprint } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -42,8 +43,6 @@ export default function LoginPage() {
   });
 
   function onSubmit(values: z.infer<typeof loginSchema>) {
-    // In a real app, you'd call Firebase Auth here.
-    // For now, we'll just simulate a successful login.
     console.log('Login attempt with:', values);
     toast({
       title: 'Login Successful',
@@ -53,23 +52,33 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center py-12">
-      <Card className="mx-auto w-full max-w-md">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
-          <CardDescription>Enter your credentials to access your account</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
+    <div className="flex items-center justify-center min-h-full py-12 px-4">
+      <motion.div
+        className="w-full max-w-md space-y-8 p-8 md:p-10 rounded-2xl bg-card/50 backdrop-blur-md border border-primary/20 shadow-2xl shadow-primary/10"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+      >
+        <div className="text-center">
+            <Fingerprint className="mx-auto h-12 w-12 text-primary neon-text" />
+            <h1 className="mt-6 text-3xl font-bold tracking-tight text-primary neon-text font-headline">
+                Access Your Hub
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+                Enter the network to connect and grow your skills.
+            </p>
+        </div>
+        
+        <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel className="text-muted-foreground">Email Address</FormLabel>
                     <FormControl>
-                      <Input placeholder="name@example.com" {...field} />
+                      <Input placeholder="name@example.com" {...field} className="neon-input"/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -81,31 +90,31 @@ export default function LoginPage() {
                 render={({ field }) => (
                   <FormItem>
                     <div className="flex items-center">
-                      <FormLabel>Password</FormLabel>
-                      <Link href="#" className="ml-auto inline-block text-sm underline text-muted-foreground hover:text-primary">
+                      <FormLabel className="text-muted-foreground">Password</FormLabel>
+                      <Link href="#" className="ml-auto inline-block text-sm text-primary/80 hover:text-primary hover:underline underline-offset-4">
                         Forgot password?
                       </Link>
                     </div>
                     <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
+                      <Input type="password" placeholder="••••••••" {...field} className="neon-input" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full">
-                Login
+              <Button type="submit" className="w-full !mt-8 btn-liquid" size="lg">
+                <span>Secure Login</span>
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{' '}
-            <Link href="#" className="underline text-primary">
+
+          <div className="mt-6 text-center text-sm">
+            <span className="text-muted-foreground">Don&apos;t have an account?{' '}</span>
+            <Link href="#" className="font-semibold text-primary hover:text-primary/80 transition-colors">
               Sign up
             </Link>
           </div>
-        </CardContent>
-      </Card>
+      </motion.div>
     </div>
   );
 }

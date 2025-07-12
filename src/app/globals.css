@@ -153,4 +153,34 @@ body {
   .animate-tab-content {
     animation: fade-in 0.5s ease-out forwards;
   }
+
+  /* Neon Login Page Styles */
+  @keyframes neon-flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+      text-shadow:
+        0 0 4px hsl(var(--primary)),
+        0 0 11px hsl(var(--primary)),
+        0 0 19px hsl(var(--primary)),
+        0 0 40px hsl(var(--primary)/0.8),
+        0 0 80px hsl(var(--primary)/0.6);
+      color: hsl(var(--primary-foreground));
+    }
+    20%, 24%, 55% {
+      text-shadow: none;
+      color: hsl(var(--primary)/0.8);
+    }
+  }
+
+  .neon-text {
+    animation: neon-flicker 3s infinite alternate;
+  }
+
+  .neon-input {
+    @apply bg-card/50 border-border transition-all duration-300;
+  }
+
+  .neon-input:focus {
+    @apply border-primary;
+    box-shadow: 0 0 8px hsl(var(--primary)/0.6), inset 0 0 8px hsl(var(--primary)/0.4);
+  }
 }
