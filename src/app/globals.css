@@ -64,10 +64,11 @@ body {
 
 @layer utilities {
   .glowing-card {
-    @apply relative p-px overflow-hidden;
+    @apply relative overflow-hidden transition-transform duration-300 ease-in-out;
+    transform-style: preserve-3d;
   }
   .glowing-card-content {
-      @apply relative bg-card rounded-[calc(var(--radius)-1px)] w-full h-full;
+      @apply relative bg-card rounded-lg w-full h-full;
   }
   .glowing-card::before {
     content: '';
@@ -78,13 +79,57 @@ body {
     height: 100%;
     background: radial-gradient(
       circle at var(--mouse-x) var(--mouse-y),
-      hsl(var(--primary) / 0.3),
-      transparent 20%
+      hsl(var(--primary) / 0.8),
+      transparent 25%
     );
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
+    border-radius: inherit;
+    z-index: 1;
   }
   .glowing-card:hover::before {
     opacity: 1;
+  }
+  .glowing-card::after {
+    content: '';
+    position: absolute;
+    top: -2px; left: -2px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    background: conic-gradient(from 180deg at 50% 50%, #10b981, #3b82f6, #a855f7, #ec4899, #10b981);
+    animation: rotate 3s linear infinite;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+    z-index: -1;
+    border-radius: inherit;
+  }
+  .glowing-card:hover::after {
+    opacity: 0.6;
+  }
+
+  .glowing-card:hover {
+    transform: translateY(-8px) rotateX(5deg) scale(1.02);
+  }
+
+  @keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Liquid button effect */
+  .btn-liquid {
+    @apply relative overflow-hidden z-10;
+  }
+  .btn-liquid span {
+    @apply relative z-20;
+  }
+  .btn-liquid::before {
+    content: '';
+    @apply absolute -left-1/2 -top-1/2 w-0 h-0 bg-primary/80 rounded-full z-10;
+    transform: translate(-50%, -50%);
+    transition: width 0.4s ease, height 0.4s ease;
+  }
+  .btn-liquid:hover::before {
+    @apply w-[250%] h-[500%];
   }
 }
