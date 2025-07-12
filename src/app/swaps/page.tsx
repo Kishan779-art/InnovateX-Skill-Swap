@@ -51,62 +51,66 @@ const SwapCard = ({ swap, onAction }: { swap: Swap, onAction: (swapId: string, a
     };
 
     return (
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Swap with {otherUser?.name}</CardTitle>
-                <Badge variant={getStatusVariant(swap.status)} className="capitalize">{swap.status}</Badge>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                <div className="flex items-center justify-between gap-2 text-center">
-                    <div className="flex-1">
-                        <p className="text-xs text-muted-foreground">{isRequester ? 'You Offer' : `${otherUser?.name} Offers`}</p>
-                        <p className="font-semibold">{swap.offeredSkill}</p>
-                    </div>
-                    <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                    <div className="flex-1">
-                        <p className="text-xs text-muted-foreground">{isResponder ? 'You Get' : `${otherUser?.name} Gets`}</p>
-                        <p className="font-semibold">{swap.wantedSkill}</p>
-                    </div>
-                </div>
-                <div className="text-sm text-muted-foreground border-l-2 pl-3 italic">
-                    {swap.message}
-                </div>
-                <div className="text-xs text-muted-foreground text-right">
-                    {swap.createdAt.toLocaleDateString()}
-                </div>
-            </CardContent>
-            {swap.status === 'pending' && (
-                <CardFooter className="flex justify-end gap-2">
-                    {isResponder && (
-                        <>
-                            <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
-                            <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
-                        </>
+        <div className="glowing-card">
+            <div className="glowing-card-content p-px">
+                <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-none shadow-none rounded-[calc(var(--radius)-1px)]">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Swap with {otherUser?.name}</CardTitle>
+                        <Badge variant={getStatusVariant(swap.status)} className="capitalize">{swap.status}</Badge>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between gap-2 text-center">
+                            <div className="flex-1">
+                                <p className="text-xs text-muted-foreground">{isRequester ? 'You Offer' : `${otherUser?.name} Offers`}</p>
+                                <p className="font-semibold">{swap.offeredSkill}</p>
+                            </div>
+                            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                            <div className="flex-1">
+                                <p className="text-xs text-muted-foreground">{isResponder ? 'You Get' : `${otherUser?.name} Gets`}</p>
+                                <p className="font-semibold">{swap.wantedSkill}</p>
+                            </div>
+                        </div>
+                        <div className="text-sm text-muted-foreground border-l-2 pl-3 italic">
+                            {swap.message}
+                        </div>
+                        <div className="text-xs text-muted-foreground text-right">
+                            {swap.createdAt.toLocaleDateString()}
+                        </div>
+                    </CardContent>
+                    {swap.status === 'pending' && (
+                        <CardFooter className="flex justify-end gap-2">
+                            {isResponder && (
+                                <>
+                                    <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
+                                    <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
+                                </>
+                            )}
+                            {isRequester && (
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button variant="destructive" size="sm"><Trash2 className="mr-1 h-4 w-4"/> Delete</Button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will permanently delete your swap request. This action cannot be undone.
+                                        </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction onClick={() => onAction(swap.id, 'delete')}>
+                                            Yes, delete it
+                                        </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                </AlertDialog>
+                            )}
+                        </CardFooter>
                     )}
-                    {isRequester && (
-                         <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="destructive" size="sm"><Trash2 className="mr-1 h-4 w-4"/> Delete</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This will permanently delete your swap request. This action cannot be undone.
-                                </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => onAction(swap.id, 'delete')}>
-                                    Yes, delete it
-                                </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    )}
-                </CardFooter>
-            )}
-        </Card>
+                </Card>
+            </div>
+        </div>
     )
 };
 
@@ -140,13 +144,13 @@ export default function SwapsPage() {
 
     return (
         <div>
-            <div className="mb-6">
+            <div className="mb-6 animate-fade-in-up">
                 <h1 className="text-3xl font-bold font-headline">Swap Inbox</h1>
                 <p className="text-muted-foreground">Manage all your incoming and outgoing skill swap requests.</p>
             </div>
             
             <Tabs defaultValue="pending" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+                <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
                     {swapTabs.map(tab => (
                         <TabsTrigger key={tab.status} value={tab.status}>
                             {tab.label} ({filteredSwaps(tab.status).length})
@@ -155,7 +159,7 @@ export default function SwapsPage() {
                 </TabsList>
                 
                 {swapTabs.map(tab => (
-                    <TabsContent key={tab.status} value={tab.status}>
+                    <TabsContent key={tab.status} value={tab.status} className="animate-tab-content">
                         {filteredSwaps(tab.status).length > 0 ? (
                             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                 {filteredSwaps(tab.status)
