@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -5,13 +6,13 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Fingerprint } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { useToast } from '@/hooks/use-toast';
-import { Fingerprint } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -32,7 +33,7 @@ const useAuth = () => {
 
 export default function LoginPage() {
   const { login } = useAuth();
-  const { toast } = useToast();
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -42,17 +43,45 @@ export default function LoginPage() {
     },
   });
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoggingIn) {
+      timer = setTimeout(() => {
+        login();
+      }, 1500); // Wait 1.5 seconds before redirecting
+    }
+    return () => clearTimeout(timer);
+  }, [isLoggingIn, login]);
+
   function onSubmit(values: z.infer<typeof loginSchema>) {
     console.log('Login attempt with:', values);
-    toast({
-      title: 'Login Successful',
-      description: "Welcome back! You're being redirected.",
-    });
-    login();
+    setIsLoggingIn(true);
   }
 
   return (
-    <div className="flex items-center justify-center min-h-full py-12 px-4">
+    <div className="flex items-center justify-center min-h-full py-12 px-4 relative overflow-hidden">
+      <AnimatePresence>
+        {isLoggingIn && (
+           <motion.div
+            key="welcome-overlay"
+            className="absolute inset-0 bg-background/80 backdrop-blur-lg flex items-center justify-center z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <motion.h1 
+              className="text-4xl font-bold tracking-tight text-primary neon-text font-headline"
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+            >
+              Welcome back
+            </motion.h1>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         className="w-full max-w-md space-y-8 p-8 md:p-10 rounded-2xl bg-card/50 backdrop-blur-md border border-primary/20 shadow-2xl shadow-primary/10"
         initial={{ opacity: 0, scale: 0.9 }}
@@ -108,7 +137,7 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full !mt-8 btn-liquid" size="lg">
+              <Button type="submit" className="w-full !mt-8 btn-liquid" size="lg" disabled={isLoggingIn}>
                 <span>Secure Login</span>
               </Button>
             </form>
