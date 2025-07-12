@@ -116,7 +116,6 @@ body {
     100% { transform: rotate(360deg); }
   }
 
-  /* Liquid button effect */
   .btn-liquid {
     @apply relative overflow-hidden z-10;
   }
@@ -131,5 +130,20 @@ body {
   }
   .btn-liquid:hover::before {
     @apply w-[250%] h-[500%];
+  }
+
+  .animated-background {
+    background-size: 300% 300%;
+    background-image: radial-gradient(at 0% 100%, hsl(var(--primary) / 0.15), transparent 50%),
+                      radial-gradient(at 100% 0%, hsl(var(--accent) / 0.2), transparent 50%),
+                      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.1), transparent 50%),
+                      radial-gradient(at 100% 100%, hsl(var(--secondary) / 0.2), transparent 70%);
+    animation: gradient-flow 20s ease-in-out infinite;
+  }
+
+  @keyframes gradient-flow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
   }
 }
