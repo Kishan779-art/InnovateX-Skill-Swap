@@ -43,7 +43,7 @@ const getInitials = (name: string) => {
     return name.substring(0, 2);
 };
 
-const SwapCard = ({ swap, onAction }: { swap: Swap, onAction: (swapId: string, action: 'accept' | 'reject') => void }) => {
+const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId: string, action: 'accept' | 'reject') => void, onDelete: (swapId: string) => void }) => {
     const isResponder = swap.responderId === MOCK_CURRENT_USER_ID;
     const isRequester = swap.requesterId === MOCK_CURRENT_USER_ID;
     
@@ -100,12 +100,54 @@ const SwapCard = ({ swap, onAction }: { swap: Swap, onAction: (swapId: string, a
                     </div>
                 )}
             </CardContent>
-            {swap.status === 'pending' && isResponder && (
-                <CardFooter className="flex justify-end gap-2">
-                    <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
-                    <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
-                </CardFooter>
-            )}
+            <CardFooter className="flex justify-end gap-2">
+                 {swap.status === 'pending' && isResponder && (
+                    <>
+                        <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
+                        <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
+                    </>
+                )}
+                {swap.status === 'pending' && isRequester && (
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="sm"><X className="mr-1 h-4 w-4"/> Cancel Request</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                This will permanently cancel your swap request. This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Back</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => onDelete(swap.id)}>Confirm</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                )}
+                 {(swap.status === 'rejected' || swap.status === 'completed') && (
+                     <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>Delete this swap?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                This will permanently remove this swap from your inbox. This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => onDelete(swap.id)}>Delete</AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+                )}
+            </CardFooter>
         </Card>
     )
 };
@@ -124,6 +166,14 @@ export default function SwapsPage() {
             description: `The swap request has been successfully ${action}ed.`,
         });
     }
+
+    const handleDelete = (swapId: string) => {
+        setSwaps(currentSwaps => currentSwaps.filter(s => s.id !== swapId));
+        toast({
+            title: 'Request Removed',
+            description: 'The swap has been removed from your inbox.',
+        });
+    };
 
     const filteredSwaps = (status: Swap['status']) => 
         swaps.filter(s => s.status === status);
@@ -157,7 +207,7 @@ export default function SwapsPage() {
                             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                                 {filteredSwaps(tab.status)
                                     .sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime())
-                                    .map(swap => <SwapCard key={swap.id} swap={swap} onAction={handleAction} />)
+                                    .map(swap => <SwapCard key={swap.id} swap={swap} onAction={handleAction} onDelete={handleDelete} />)
                                 }
                             </div>
                         ) : (
