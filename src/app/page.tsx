@@ -7,7 +7,7 @@ import { UserCard } from '@/components/user-card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 
 const USERS_PER_PAGE = 8;
 
@@ -42,16 +42,16 @@ export default function Home() {
 
   return (
     <div className="space-y-8">
-      <div className="text-center">
+      <div className="text-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
         <h1 className="text-4xl font-headline font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
           Connect & Grow
         </h1>
-        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           Discover talented individuals, exchange skills, and build your network.
         </p>
       </div>
 
-      <div className="p-6 bg-card rounded-lg shadow-md border">
+      <div className="p-6 bg-card rounded-lg shadow-lg border animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
           <div className="md:col-span-2">
             <label htmlFor="skill-search" className="block text-sm font-medium text-foreground mb-1">Search by skill</label>
@@ -96,11 +96,17 @@ export default function Home() {
       {paginatedUsers.length > 0 ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {paginatedUsers.map(user => (
-              <UserCard key={user.id} user={user} />
+            {paginatedUsers.map((user, index) => (
+              <div
+                key={user.id}
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${0.4 + index * 0.05}s`, animationFillMode: 'both' }}
+              >
+                <UserCard user={user} />
+              </div>
             ))}
           </div>
-          <div className="flex justify-center items-center gap-4">
+          <div className="flex justify-center items-center gap-4 animate-fade-in">
             <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="liquid">
               <span>Previous</span>
             </Button>
@@ -113,8 +119,10 @@ export default function Home() {
           </div>
         </>
       ) : (
-        <div className="text-center py-16">
-            <p className="text-muted-foreground">No users found with the selected criteria. Try adjusting your filters.</p>
+        <div className="text-center py-16 animate-fade-in">
+            <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+            <h3 className="mt-4 text-lg font-medium">No Users Found</h3>
+            <p className="text-muted-foreground mt-1">Try adjusting your search filters.</p>
         </div>
       )}
     </div>
