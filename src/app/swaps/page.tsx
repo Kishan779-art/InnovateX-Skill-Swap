@@ -43,7 +43,7 @@ const getInitials = (name: string) => {
     return name.substring(0, 2);
 };
 
-const SwapCard = ({ swap, onAction }: { swap: Swap, onAction: (swapId: string, action: 'accept' | 'reject' | 'delete') => void }) => {
+const SwapCard = ({ swap, onAction }: { swap: Swap, onAction: (swapId: string, action: 'accept' | 'reject') => void }) => {
     const isResponder = swap.responderId === MOCK_CURRENT_USER_ID;
     const isRequester = swap.requesterId === MOCK_CURRENT_USER_ID;
     
@@ -115,16 +115,13 @@ export default function SwapsPage() {
     const [swaps, setSwaps] = useState<Swap[]>(mockSwaps.filter(s => s.requesterId === MOCK_CURRENT_USER_ID || s.responderId === MOCK_CURRENT_USER_ID));
     const { toast } = useToast();
 
-    const handleAction = (swapId: string, action: 'accept' | 'reject' | 'delete') => {
+    const handleAction = (swapId: string, action: 'accept' | 'reject') => {
         setSwaps(currentSwaps => {
-            if (action === 'delete') {
-                return currentSwaps.filter(s => s.id !== swapId);
-            }
             return currentSwaps.map(s => s.id === swapId ? { ...s, status: action === 'accept' ? 'accepted' : 'rejected' } : s);
         });
         toast({
-            title: `Request ${action === 'delete' ? 'deleted' : (action + 'ed')}`,
-            description: `The swap request has been successfully ${action === 'delete' ? 'deleted' : (action + 'ed')}.`,
+            title: `Request ${action}ed`,
+            description: `The swap request has been successfully ${action}ed.`,
         });
     }
 
