@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -47,6 +48,7 @@ const useAuth = () => {
 export function Header() {
   const { isAuthenticated, logout } = useAuth();
   const [isClient, setIsClient] = useState(false);
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
@@ -60,6 +62,15 @@ export function Header() {
       { href: '/profile/edit', label: 'Profile' },
     ] : [])
   ];
+
+  const handleLinkClick = () => {
+    setMobileMenuOpen(false);
+  };
+
+  const handleLogoutClick = () => {
+    logout();
+    setMobileMenuOpen(false);
+  }
 
   return (
     <header className="bg-background/80 backdrop-blur-sm border-b sticky top-0 z-50">
@@ -93,7 +104,7 @@ export function Header() {
 
 
         <div className="md:hidden">
-          <Sheet>
+          <Sheet open={isMobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
@@ -102,23 +113,23 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="bg-background">
               <div className="flex flex-col gap-6 p-6">
-                <Link href="/" className="flex items-center gap-2">
+                <Link href="/" onClick={handleLinkClick} className="flex items-center gap-2">
                     <Share2 className="h-6 w-6 text-primary" />
                     <span className="font-bold font-headline">SkillSwap Connect</span>
                 </Link>
                 <nav className="flex flex-col gap-4">
                   {navLinks.map(link => (
-                    <Link key={link.href} href={link.href} className="text-base font-medium text-muted-foreground transition-colors hover:text-primary">
+                    <Link key={link.href} href={link.href} onClick={handleLinkClick} className="text-base font-medium text-muted-foreground transition-colors hover:text-primary">
                       {link.label}
                     </Link>
                   ))}
                 </nav>
                 <div className="border-t pt-6">
                   {isAuthenticated ? (
-                    <Button onClick={logout} variant="outline" className="w-full">Logout</Button>
+                    <Button onClick={handleLogoutClick} variant="outline" className="w-full">Logout</Button>
                   ) : (
                     <Button asChild className="w-full">
-                      <Link href="/login">Login</Link>
+                      <Link href="/login" onClick={handleLinkClick}>Login</Link>
                     </Button>
                   )}
                 </div>
