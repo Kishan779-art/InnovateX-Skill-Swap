@@ -116,7 +116,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .glowing-card-content {
-      @apply relative bg-card rounded-lg w-full h-full z-10;
+      @apply relative bg-card/50 backdrop-blur-md border border-primary/20 rounded-lg w-full h-full z-10;
   }
 
   .btn-liquid {

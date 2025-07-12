@@ -58,7 +58,7 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
 
     if (!otherUser) {
         return (
-            <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border border-dashed shadow-none">
+            <Card className="flex flex-col h-full bg-card/50 backdrop-blur-md border border-dashed shadow-none">
                 <CardHeader>
                     <CardTitle className="text-sm font-medium text-muted-foreground">Swap with a deleted user</CardTitle>
                     <Badge variant="destructive">Invalid</Badge>
@@ -71,7 +71,7 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
     }
     
     return (
-        <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-primary/10 shadow-md transition-shadow hover:shadow-primary/20">
+        <Card className="flex flex-col h-full bg-card/50 backdrop-blur-md border-primary/10 shadow-md transition-shadow hover:shadow-primary/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div className="flex items-center gap-3">
                     <Avatar>
@@ -236,7 +236,7 @@ export default function SwapsPage() {
                                     }
                                 </motion.div>
                             ) : (
-                                <div className="text-center py-16 rounded-lg bg-card/50 mt-4">
+                                <div className="text-center py-16 rounded-lg bg-card/50 mt-4 backdrop-blur-md">
                                     <Users className="mx-auto h-12 w-12 text-muted-foreground" />
                                     <p className="mt-4 text-muted-foreground">No {tab.label.toLowerCase()} requests.</p>
                                 </div>

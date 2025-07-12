@@ -69,7 +69,7 @@ export default function PublicProfilePage({ params }: { params: { userId: string
   return (
     <>
       <div className="max-w-4xl mx-auto">
-        <Card className="overflow-hidden border-primary/20 shadow-lg shadow-primary/10">
+        <Card className="overflow-hidden bg-card/50 backdrop-blur-md border-primary/20 shadow-lg shadow-primary/10">
           <div className="bg-muted/40 p-8">
             <motion.div 
               className="flex flex-col md:flex-row items-center gap-6"
@@ -150,7 +150,7 @@ export default function PublicProfilePage({ params }: { params: { userId: string
                     const reviewer = mockUsers.find(u => u.id === fb.reviewerId);
                     const reviewedForSkill = mockUsers.find(u => u.id === fb.reviewedId)?.skillsWanted[0] || 'a skill';
                     return (
-                    <Card key={fb.id} className="bg-card/70">
+                    <Card key={fb.id} className="bg-card/50 backdrop-blur-md border border-primary/20">
                         <CardContent className="p-4 flex gap-4">
                             <Avatar>
                                 <AvatarImage src={reviewer?.profilePhotoUrl} />
@@ -172,7 +172,7 @@ export default function PublicProfilePage({ params }: { params: { userId: string
                     </Card>
                     )
                 }) : (
-                    <Card className="bg-card/70">
+                    <Card className="bg-card/50 backdrop-blur-md border border-primary/20">
                         <CardContent className="p-6 text-center text-muted-foreground">
                             This user doesn't have any feedback yet.
                         </CardContent>

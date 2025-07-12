@@ -109,7 +109,7 @@ export default function Home() {
         </motion.div>
 
         <motion.div 
-          className="p-6 bg-card/50 backdrop-blur-sm rounded-lg shadow-lg border"
+          className="p-6 bg-card/50 backdrop-blur-sm rounded-lg shadow-lg border border-primary/20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}

@@ -28,7 +28,7 @@ export function UserCard({ user, onRequestSwap }: UserCardProps) {
 
   return (
     <div className="glowing-card h-full">
-        <Card className="glowing-card-content flex flex-col h-full bg-card/95 backdrop-blur-sm shadow-lg border-transparent">
+        <Card className="glowing-card-content flex flex-col h-full">
             <CardHeader className="flex flex-col items-center text-center p-6">
                 <Avatar className="h-20 w-20 border-2 border-primary/50 mb-3">
                     <AvatarImage src={user.profilePhotoUrl} alt={user.name} data-ai-hint={user.data_ai_hint} />
