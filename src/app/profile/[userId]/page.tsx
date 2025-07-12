@@ -66,7 +66,7 @@ export default function PublicProfilePage({ params }: { params: { userId: string
           <div className="bg-muted/40 p-8">
             <div className="flex flex-col md:flex-row items-center gap-6">
               <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
-                <AvatarImage src={user.profilePhotoUrl} alt={user.name} data-ai-hint={user.data_ai_hint} />
+                <AvatarImage src={user.profilePhotoUrl} alt={user.name} />
                 <AvatarFallback className="text-4xl">{getInitials(user.name)}</AvatarFallback>
               </Avatar>
               <div className="text-center md:text-left">

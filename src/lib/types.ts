@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   profilePhotoUrl: string;
+  data_ai_hint?: string;
   location?: string;
   skillsOffered: string[];
   skillsWanted: string[];

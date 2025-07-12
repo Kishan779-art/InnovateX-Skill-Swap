@@ -5,12 +5,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Star } from 'lucide-react';
+import { useGlow } from '@/hooks/use-glow';
 
 interface UserCardProps {
   user: User;
 }
 
 export function UserCard({ user }: UserCardProps) {
+  const { ref, style } = useGlow();
+
   const averageRating = user.feedback.length > 0
     ? (user.feedback.reduce((acc, f) => acc + f.rating, 0) / user.feedback.length).toFixed(1)
     : 'New';
@@ -24,10 +27,10 @@ export function UserCard({ user }: UserCardProps) {
   };
 
   return (
-    <Card className="flex flex-col h-full overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <Card ref={ref} style={style} className="glowing-card flex flex-col h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <CardHeader className="flex flex-row items-center gap-4 p-4">
         <Avatar className="h-16 w-16 border-2 border-primary/50">
-          <AvatarImage src={user.profilePhotoUrl} alt={user.name} data-ai-hint={user.data_ai_hint} />
+          <AvatarImage src={user.profilePhotoUrl} alt={user.name} />
           <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
