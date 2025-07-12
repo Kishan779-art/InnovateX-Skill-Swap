@@ -75,11 +75,13 @@ export default function LoginPage() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem className="floating-label-input">
-                    <FormControl>
-                      <Input placeholder=" " {...field} className="neon-input"/>
-                    </FormControl>
-                     <label htmlFor={field.name}>Email Address</label>
+                  <FormItem>
+                    <div className="floating-label-input relative">
+                      <FormControl>
+                        <Input placeholder=" " {...field} className="neon-input"/>
+                      </FormControl>
+                      <label htmlFor={field.name}>Email Address</label>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}

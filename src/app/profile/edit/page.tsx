@@ -137,11 +137,13 @@ export default function EditProfilePage() {
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem className="floating-label-input">
-                      <FormControl>
-                        <Input placeholder=" " {...field} className="neon-input" />
-                      </FormControl>
-                      <label htmlFor={field.name}>Full Name</label>
+                    <FormItem>
+                      <div className="floating-label-input relative">
+                        <FormControl>
+                          <Input placeholder=" " {...field} className="neon-input" />
+                        </FormControl>
+                        <label htmlFor={field.name}>Full Name</label>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -150,11 +152,13 @@ export default function EditProfilePage() {
                   control={form.control}
                   name="location"
                   render={({ field }) => (
-                    <FormItem className="floating-label-input">
-                      <FormControl>
-                        <Input placeholder=" " {...field} className="neon-input" />
-                      </FormControl>
-                      <label htmlFor={field.name}>Location</label>
+                    <FormItem>
+                       <div className="floating-label-input relative">
+                        <FormControl>
+                          <Input placeholder=" " {...field} className="neon-input" />
+                        </FormControl>
+                        <label htmlFor={field.name}>Location</label>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
