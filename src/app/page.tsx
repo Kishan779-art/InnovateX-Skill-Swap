@@ -101,14 +101,14 @@ export default function Home() {
             ))}
           </div>
           <div className="flex justify-center items-center gap-4">
-            <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="outline">
-              Previous
+            <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="liquid">
+              <span>Previous</span>
             </Button>
             <span className="text-sm text-muted-foreground">
               Page {currentPage} of {totalPages}
             </span>
-            <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="outline">
-              Next
+            <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="liquid">
+              <span>Next</span>
             </Button>
           </div>
         </>
