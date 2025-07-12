@@ -96,15 +96,16 @@ body {
     top: -2px; left: -2px;
     width: calc(100% + 4px);
     height: calc(100% + 4px);
-    background: conic-gradient(from 180deg at 50% 50%, #10b981, #3b82f6, #a855f7, #ec4899, #10b981);
-    animation: rotate 3s linear infinite;
+    background: conic-gradient(from 180deg at 50% 50%, hsl(var(--primary)), hsl(var(--accent)), hsl(var(--primary) / 0.5), hsl(var(--accent)), hsl(var(--primary)));
+    animation: rotate 4s linear infinite;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
     z-index: -1;
     border-radius: inherit;
+    filter: blur(5px);
   }
   .glowing-card:hover::after {
-    opacity: 0.6;
+    opacity: 0.8;
   }
 
   .glowing-card:hover {
@@ -133,19 +134,27 @@ body {
   }
 
   .animated-background {
-    background-size: 300% 300%;
-    background-image: radial-gradient(at 0% 100%, hsl(var(--primary) / 0.15), transparent 50%),
-                      radial-gradient(at 100% 0%, hsl(var(--accent) / 0.2), transparent 50%),
-                      radial-gradient(at 0% 0%, hsl(var(--primary) / 0.1), transparent 50%),
-                      radial-gradient(at 100% 100%, hsl(var(--secondary) / 0.2), transparent 70%);
-    animation: gradient-flow 20s ease-in-out infinite;
+    --bg-color: hsl(var(--background));
+    --dot-color: hsl(var(--primary) / 0.15);
+    --line-color: hsl(var(--primary) / 0.08);
+    background-color: var(--bg-color);
+    background-image:
+      linear-gradient(90deg, var(--bg-color) 2px, transparent 2px),
+      linear-gradient(var(--bg-color) 2px, transparent 2px),
+      linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+      radial-gradient(circle at 100% 100%, transparent 0, transparent 40px, var(--line-color) 40px, var(--line-color) 41px, transparent 41px),
+      radial-gradient(circle at 0 0, transparent 0, transparent 40px, var(--line-color) 40px, var(--line-color) 41px, transparent 41px);
+    background-size: 40px 40px, 40px 40px, 20px 20px, 20px 20px, 80px 80px, 80px 80px;
+    background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px, 0 0, 0 0;
+    animation: bg-pan 120s linear infinite;
   }
 
-  @keyframes gradient-flow {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  @keyframes bg-pan {
+    0% { background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px, 0 0, 0 0; }
+    100% { background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px, 160px 160px, -160px -160px; }
   }
+
 
   /* Added Animations */
   @keyframes fade-in {
