@@ -100,35 +100,10 @@ const SwapCard = ({ swap, onAction }: { swap: Swap, onAction: (swapId: string, a
                     </div>
                 )}
             </CardContent>
-            {swap.status === 'pending' && (
+            {swap.status === 'pending' && isResponder && (
                 <CardFooter className="flex justify-end gap-2">
-                    {isResponder && (
-                        <>
-                            <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
-                            <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
-                        </>
-                    )}
-                    {isRequester && (
-                        <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                                <Button variant="destructive" size="sm"><Trash2 className="mr-1 h-4 w-4"/> Delete Request</Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                    This will permanently delete your swap request. This action cannot be undone.
-                                </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction onClick={() => onAction(swap.id, 'delete')}>
-                                    Yes, delete it
-                                </AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    )}
+                    <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
+                    <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
                 </CardFooter>
             )}
         </Card>
