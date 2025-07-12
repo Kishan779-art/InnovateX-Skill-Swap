@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { mockUsers, mockFeedback } from '@/lib/data';
 import type { User, Feedback } from '@/lib/types';
-import { notFound } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,8 +26,18 @@ const sectionVariants = {
   }),
 };
 
+const getInitials = (name: string) => {
+    if (!name) return '??';
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`;
+    }
+    return name.substring(0, 2);
+};
+
 export default function PublicProfilePage({ params }: { params: { userId: string } }) {
   const [user, setUser] = useState<User | null>(null);
+  const [feedback, setFeedback] = useState<Feedback[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -36,10 +46,10 @@ export default function PublicProfilePage({ params }: { params: { userId: string
     const foundCurrentUser = mockUsers.find(u => u.id === MOCK_CURRENT_USER_ID);
     
     if (foundUser) {
-      setUser({
-          ...foundUser,
-          feedback: mockFeedback.filter(f => f.reviewedId === foundUser.id)
-      });
+      setUser(foundUser);
+      setFeedback(mockFeedback.filter(f => f.reviewedId === foundUser.id));
+    } else {
+      notFound();
     }
 
     if(foundCurrentUser) {
@@ -48,31 +58,18 @@ export default function PublicProfilePage({ params }: { params: { userId: string
   }, [params.userId]);
 
   if (!user) {
-    // In a real app, you might show a loading skeleton here
-    const userExists = mockUsers.some(u => u.id === params.userId);
-    if (!userExists) {
-      notFound();
-    }
+    // This could be a skeleton loader in a real app
     return <div>Loading profile...</div>
   }
 
-  const averageRating = user.feedback.length > 0
-    ? (user.feedback.reduce((acc, f) => acc + f.rating, 0) / user.feedback.length).toFixed(1)
+  const averageRating = feedback.length > 0
+    ? (feedback.reduce((acc, f) => acc + f.rating, 0) / feedback.length).toFixed(1)
     : 0;
-    
-  const getInitials = (name: string) => {
-    const names = name.split(' ');
-    if (names.length > 1) {
-      return `${names[0][0]}${names[names.length - 1][0]}`;
-    }
-    return name.substring(0, 2);
-  };
-
 
   return (
     <>
       <div className="max-w-4xl mx-auto">
-        <Card className="overflow-hidden">
+        <Card className="overflow-hidden border-primary/20 shadow-lg shadow-primary/10">
           <div className="bg-muted/40 p-8">
             <motion.div 
               className="flex flex-col md:flex-row items-center gap-6"
@@ -95,13 +92,13 @@ export default function PublicProfilePage({ params }: { params: { userId: string
                         <Star className="w-5 h-5 fill-current" />
                         <span className="font-bold text-lg">{averageRating}</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">({user.feedback.length} reviews)</span>
+                    <span className="text-sm text-muted-foreground">({feedback.length} reviews)</span>
                 </div>
               </div>
               <div className="md:ml-auto">
-                <Button size="lg" onClick={() => setIsModalOpen(true)}>
-                    <MessageSquare className="mr-2 h-5 w-5" />
-                    Request Swap
+                <Button size="lg" onClick={() => setIsModalOpen(true)} className="btn-liquid">
+                    <span><MessageSquare className="mr-2 h-5 w-5 inline-block" />
+                    Request Swap</span>
                 </Button>
               </div>
             </motion.div>
@@ -115,7 +112,7 @@ export default function PublicProfilePage({ params }: { params: { userId: string
               viewport={{ once: true, amount: 0.5 }}
               custom={0}
             >
-              <h3 className="text-lg font-semibold font-headline mb-3">Skills Offered</h3>
+              <h3 className="text-xl font-semibold font-headline mb-3 text-primary">Skills Offered</h3>
               <div className="flex flex-wrap gap-2">
                 {user.skillsOffered.map(skill => (
                   <Badge key={skill} className="text-sm py-1 px-3">{skill}</Badge>
@@ -129,7 +126,7 @@ export default function PublicProfilePage({ params }: { params: { userId: string
               viewport={{ once: true, amount: 0.5 }}
               custom={1}
             >
-              <h3 className="text-lg font-semibold font-headline mb-3">Skills Wanted</h3>
+              <h3 className="text-xl font-semibold font-headline mb-3 text-accent">Skills Wanted</h3>
               <div className="flex flex-wrap gap-2">
                 {user.skillsWanted.map(skill => (
                   <Badge key={skill} variant="secondary" className="text-sm py-1 px-3">{skill}</Badge>
@@ -149,29 +146,33 @@ export default function PublicProfilePage({ params }: { params: { userId: string
         >
             <h2 className="text-2xl font-bold font-headline mb-4">Feedback & Reviews</h2>
             <div className="space-y-4">
-                {user.feedback.length > 0 ? user.feedback.map(fb => (
-                    <Card key={fb.id}>
+                {feedback.length > 0 ? feedback.map(fb => {
+                    const reviewer = mockUsers.find(u => u.id === fb.reviewerId);
+                    const reviewedForSkill = mockUsers.find(u => u.id === fb.reviewedId)?.skillsWanted[0] || 'a skill';
+                    return (
+                    <Card key={fb.id} className="bg-card/70">
                         <CardContent className="p-4 flex gap-4">
                             <Avatar>
-                                <AvatarImage src={mockUsers.find(u => u.id === fb.reviewerId)?.profilePhotoUrl} />
-                                <AvatarFallback>{getInitials(mockUsers.find(u => u.id === fb.reviewerId)?.name || 'U')}</AvatarFallback>
+                                <AvatarImage src={reviewer?.profilePhotoUrl} />
+                                <AvatarFallback>{getInitials(reviewer?.name || 'U')}</AvatarFallback>
                             </Avatar>
                             <div>
                                 <div className="flex items-center gap-2">
-                                    <p className="font-semibold">{mockUsers.find(u => u.id === fb.reviewerId)?.name}</p>
+                                    <p className="font-semibold">{reviewer?.name}</p>
                                     <div className="flex items-center text-amber-500">
                                         {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className={`h-4 w-4 ${i < fb.rating ? 'fill-current' : 'text-gray-300'}`} />
+                                            <Star key={i} className={`h-4 w-4 ${i < fb.rating ? 'fill-current' : 'text-gray-600'}`} />
                                         ))}
                                     </div>
                                 </div>
-                                <p className="text-muted-foreground mt-1 text-sm">{`For swap of "${mockUsers.find(u => u.id === fb.reviewedId)?.skillsWanted[0]}"`}</p>
+                                <p className="text-muted-foreground mt-1 text-sm">{`For swap of "${reviewedForSkill}"`}</p>
                                 <p className="mt-2">{fb.comment}</p>
                             </div>
                         </CardContent>
                     </Card>
-                )) : (
-                    <Card>
+                    )
+                }) : (
+                    <Card className="bg-card/70">
                         <CardContent className="p-6 text-center text-muted-foreground">
                             This user doesn't have any feedback yet.
                         </CardContent>

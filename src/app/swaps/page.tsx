@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { mockSwaps, mockUsers } from '@/lib/data';
 import type { Swap, User } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -21,6 +21,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useToast } from '@/hooks/use-toast';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const MOCK_CURRENT_USER_ID = 'u1';
 
@@ -44,15 +45,18 @@ const getInitials = (name: string) => {
 };
 
 const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId: string, action: 'accept' | 'reject') => void, onDelete: (swapId: string) => void }) => {
+    const [otherUser, setOtherUser] = useState<User | undefined>();
+
     const isResponder = swap.responderId === MOCK_CURRENT_USER_ID;
     const isRequester = swap.requesterId === MOCK_CURRENT_USER_ID;
-    
-    const otherUser = isResponder 
-        ? mockUsers.find(u => u.id === swap.requesterId) 
-        : mockUsers.find(u => u.id === swap.responderId);
+
+    useEffect(() => {
+        const otherUserId = isResponder ? swap.requesterId : swap.responderId;
+        const user = mockUsers.find(u => u.id === otherUserId);
+        setOtherUser(user);
+    }, [swap, isResponder]);
 
     if (!otherUser) {
-        // This can happen if a user is deleted. We'll render a placeholder.
         return (
             <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border border-dashed shadow-none">
                 <CardHeader>
@@ -67,7 +71,7 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
     }
     
     return (
-        <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-none shadow-md">
+        <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-primary/10 shadow-md transition-shadow hover:shadow-primary/20">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
                 <div className="flex items-center gap-3">
                     <Avatar>
@@ -89,7 +93,7 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
                     </div>
                     <ArrowRight className="h-5 w-5 text-primary flex-shrink-0" />
                     <div className="flex-1">
-                        <p className="text-xs text-muted-foreground">{isResponder ? 'You Receive' : `${otherUser.name} Receives`}</p>
+                        <p className="text-xs text-muted-foreground">{isResponder ? 'You Want' : `${otherUser.name} Wants`}</p>
                         <p className="font-semibold">{swap.wantedSkill}</p>
                     </div>
                 </div>
@@ -154,8 +158,13 @@ const SwapCard = ({ swap, onAction, onDelete }: { swap: Swap, onAction: (swapId:
 
 
 export default function SwapsPage() {
-    const [swaps, setSwaps] = useState<Swap[]>(mockSwaps.filter(s => s.requesterId === MOCK_CURRENT_USER_ID || s.responderId === MOCK_CURRENT_USER_ID));
+    const [swaps, setSwaps] = useState<Swap[]>([]);
     const { toast } = useToast();
+
+    useEffect(() => {
+        // Simulating fetching swaps for the current user
+        setSwaps(mockSwaps.filter(s => s.requesterId === MOCK_CURRENT_USER_ID || s.responderId === MOCK_CURRENT_USER_ID));
+    }, []);
 
     const handleAction = (swapId: string, action: 'accept' | 'reject') => {
         setSwaps(currentSwaps => {
@@ -203,19 +212,36 @@ export default function SwapsPage() {
                 
                 {swapTabs.map(tab => (
                     <TabsContent key={tab.status} value={tab.status} className="animate-tab-content">
-                        {filteredSwaps(tab.status).length > 0 ? (
-                            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                                {filteredSwaps(tab.status)
-                                    .sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime())
-                                    .map(swap => <SwapCard key={swap.id} swap={swap} onAction={handleAction} onDelete={handleDelete} />)
-                                }
-                            </div>
-                        ) : (
-                            <div className="text-center py-16 rounded-lg bg-card/50 mt-4">
-                                <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                                <p className="mt-4 text-muted-foreground">No {tab.label.toLowerCase()} requests.</p>
-                            </div>
-                        )}
+                         <AnimatePresence>
+                            {filteredSwaps(tab.status).length > 0 ? (
+                                <motion.div 
+                                    className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1, transition: { staggerChildren: 0.1 } }}
+                                    exit={{ opacity: 0 }}
+                                >
+                                    {filteredSwaps(tab.status)
+                                        .sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime())
+                                        .map(swap => (
+                                            <motion.div
+                                                key={swap.id}
+                                                layout
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                exit={{ opacity: 0, scale: 0.9 }}
+                                            >
+                                                <SwapCard swap={swap} onAction={handleAction} onDelete={handleDelete} />
+                                            </motion.div>
+                                        ))
+                                    }
+                                </motion.div>
+                            ) : (
+                                <div className="text-center py-16 rounded-lg bg-card/50 mt-4">
+                                    <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                                    <p className="mt-4 text-muted-foreground">No {tab.label.toLowerCase()} requests.</p>
+                                </div>
+                            )}
+                         </AnimatePresence>
                     </TabsContent>
                 ))}
             </Tabs>

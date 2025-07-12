@@ -47,10 +47,15 @@ export default function Home() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   useEffect(() => {
+    setIsLoading(true);
     // Simulate data fetching
     setTimeout(() => {
-      setUsers(mockUsers.filter(u => u.profileStatus === 'public'));
-      setCurrentUser(mockUsers.find(u => u.id === MOCK_CURRENT_USER_ID) || null);
+      const publicUsers = mockUsers.filter(u => u.profileStatus === 'public');
+      setUsers(publicUsers);
+      const user = mockUsers.find(u => u.id === MOCK_CURRENT_USER_ID);
+      if (user) {
+        setCurrentUser(user);
+      }
       setIsLoading(false);
     }, 1500);
   }, []);
@@ -179,14 +184,14 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5, delay: 0.5 }}
             >
-              <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="liquid">
-                <span>Previous</span>
+              <Button onClick={handlePrevPage} disabled={currentPage === 1}>
+                Previous
               </Button>
               <span className="text-sm text-muted-foreground">
                 Page {currentPage} of {totalPages}
               </span>
-              <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="liquid">
-                <span>Next</span>
+              <Button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                Next
               </Button>
             </motion.div>
           </>

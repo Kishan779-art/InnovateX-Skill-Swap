@@ -11,7 +11,8 @@ export const mockFeedback: Feedback[] = [
   { id: 'f8', swapId: 's8', reviewerId: 'u2', reviewedId: 'u6', rating: 5, comment: 'The best yoga instructor!'},
 ];
 
-export const mockUsers: User[] = [
+// We need to define users without feedback first, then assign feedback.
+const usersBase: Omit<User, 'feedback'>[] = [
   {
     id: 'u1',
     name: 'Alice Johnson',
@@ -23,7 +24,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Graphic Design', 'Pottery'],
     availability: 'evenings',
     profileStatus: 'public',
-    feedback: mockFeedback.filter(f => f.reviewedId === 'u1')
   },
   {
     id: 'u2',
@@ -36,7 +36,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Web Development', 'Yoga'],
     availability: 'weekends',
     profileStatus: 'public',
-    feedback: mockFeedback.filter(f => f.reviewedId === 'u2')
   },
   {
     id: 'u3',
@@ -49,7 +48,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Photography', 'Marketing'],
     availability: 'weekdays',
     profileStatus: 'public',
-    feedback: mockFeedback.filter(f => f.reviewedId === 'u3')
   },
   {
     id: 'u4',
@@ -62,7 +60,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Baking', 'Public Speaking'],
     availability: 'evenings',
     profileStatus: 'public',
-    feedback: mockFeedback.filter(f => f.reviewedId === 'u4')
   },
   {
     id: 'u5',
@@ -75,7 +72,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Web Development', 'Cooking'],
     availability: 'weekends',
     profileStatus: 'public',
-    feedback: mockFeedback.filter(f => f.reviewedId === 'u5')
   },
   {
     id: 'u6',
@@ -88,7 +84,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Graphic Design', 'Gardening'],
     availability: 'weekdays',
     profileStatus: 'public',
-    feedback: mockFeedback.filter(f => f.reviewedId === 'u6')
   },
    {
     id: 'u7',
@@ -101,7 +96,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Latex Sales', 'Hand-modeling'],
     availability: 'evenings',
     profileStatus: 'private', // This user should not appear on the home page
-    feedback: []
   },
   {
     id: 'u8',
@@ -114,7 +108,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Normal Life', 'Disguise'],
     availability: 'weekends',
     profileStatus: 'public',
-    feedback: []
   },
   {
     id: 'u9',
@@ -127,7 +120,6 @@ export const mockUsers: User[] = [
     skillsWanted: ['Dinosaur Taming', 'Helicopter Piloting'],
     availability: 'weekends',
     profileStatus: 'public',
-    feedback: []
   },
   {
     id: 'u10',
@@ -140,18 +132,22 @@ export const mockUsers: User[] = [
     skillsWanted: ['Project Management', 'Public Speaking'],
     availability: 'weekdays',
     profileStatus: 'public',
-    feedback: []
   },
 ];
 
+export const mockUsers: User[] = usersBase.map(user => ({
+  ...user,
+  feedback: mockFeedback.filter(f => f.reviewedId === user.id),
+}));
+
 
 export const mockSwaps: Swap[] = [
-    { id: 's1', requesterId: 'u2', requesterName: 'Bob Williams', responderId: 'u1', responderName: 'Alice Johnson', offeredSkill: 'Graphic Design', wantedSkill: 'Web Development', message: 'Hey Alice, I can help with your branding if you can build a portfolio site for me.', status: 'completed', createdAt: new Date('2023-10-01') },
-    { id: 's2', requesterId: 'u3', requesterName: 'Charlie Brown', responderId: 'u1', responderName: 'Alice Johnson', offeredSkill: 'Baking', wantedSkill: 'Web Development', message: 'I can bake you the best cookies for a week for some help on my blog.', status: 'accepted', createdAt: new Date('2023-10-15') },
-    { id: 's3', requesterId: 'u1', requesterName: 'Alice Johnson', responderId: 'u2', responderName: 'Bob Williams', offeredSkill: 'React', wantedSkill: 'Pottery', message: 'Looking to learn pottery, can teach you React in exchange!', status: 'pending', createdAt: new Date('2023-10-20') },
-    { id: 's4', requesterId: 'u4', requesterName: 'Diana Prince', responderId: 'u3', responderName: 'Charlie Brown', offeredSkill: 'SEO', wantedSkill: 'Baking', message: 'I will get your food blog to the first page of Google for some sourdough lessons.', status: 'rejected', createdAt: new Date('2023-09-25') },
-    { id: 's5', requesterId: 'u5', requesterName: 'Ethan Hunt', responderId: 'u4', responderName: 'Diana Prince', offeredSkill: 'Guitar Lessons', wantedSkill: 'Marketing Strategy', message: 'Need help marketing my new album. Can teach you guitar.', status: 'pending', createdAt: new Date('2023-10-22') },
-    { id: 's6', requesterId: 'u1', requesterName: 'Alice Johnson', responderId: 'u5', responderName: 'Ethan Hunt', offeredSkill: 'Node.js', wantedSkill: 'Guitar Lessons', message: 'Hi Ethan, I\'m a developer who would love to learn guitar. Can help with backend work.', status: 'accepted', createdAt: new Date('2023-10-18') },
-    { id: 's7', requesterId: 'u6', requesterName: 'Fiona Glenanne', responderId: 'u2', responderName: 'Bob Williams', offeredSkill: 'Yoga Instruction', wantedSkill: 'Illustration', message: 'Can offer private yoga sessions for some custom illustrations for my studio.', status: 'completed', createdAt: new Date('2023-08-15') },
-    { id: 's8', requesterId: 'u2', requesterName: 'Bob Williams', responderId: 'u6', responderName: 'Fiona Glenanne', offeredSkill: 'Logo Design', wantedSkill: 'Yoga Instruction', message: 'Hi Fiona, I can design a new logo for your yoga business in exchange for a few classes.', status: 'pending', createdAt: new Date('2023-10-21') },
+    { id: 's1', requesterId: 'u2', responderId: 'u1', offeredSkill: 'Graphic Design', wantedSkill: 'Web Development', message: 'Hey Alice, I can help with your branding if you can build a portfolio site for me.', status: 'completed', createdAt: new Date('2023-10-01') },
+    { id: 's2', requesterId: 'u3', responderId: 'u1', offeredSkill: 'Baking', wantedSkill: 'Web Development', message: 'I can bake you the best cookies for a week for some help on my blog.', status: 'accepted', createdAt: new Date('2023-10-15') },
+    { id: 's3', requesterId: 'u1', responderId: 'u2', offeredSkill: 'React', wantedSkill: 'Pottery', message: 'Looking to learn pottery, can teach you React in exchange!', status: 'pending', createdAt: new Date('2023-10-20') },
+    { id: 's4', requesterId: 'u4', responderId: 'u3', offeredSkill: 'SEO', wantedSkill: 'Baking', message: 'I will get your food blog to the first page of Google for some sourdough lessons.', status: 'rejected', createdAt: new Date('2023-09-25') },
+    { id: 's5', requesterId: 'u5', responderId: 'u4', offeredSkill: 'Guitar Lessons', wantedSkill: 'Marketing Strategy', message: 'Need help marketing my new album. Can teach you guitar.', status: 'pending', createdAt: new Date('2023-10-22') },
+    { id: 's6', requesterId: 'u1', responderId: 'u5', offeredSkill: 'Node.js', wantedSkill: 'Guitar Lessons', message: 'Hi Ethan, I\'m a developer who would love to learn guitar. Can help with backend work.', status: 'accepted', createdAt: new Date('2023-10-18') },
+    { id: 's7', requesterId: 'u6', responderId: 'u2', offeredSkill: 'Yoga Instruction', wantedSkill: 'Illustration', message: 'Can offer private yoga sessions for some custom illustrations for my studio.', status: 'completed', createdAt: new Date('2023-08-15') },
+    { id: 's8', requesterId: 'u2', responderId: 'u6', offeredSkill: 'Logo Design', wantedSkill: 'Yoga Instruction', message: 'Hi Fiona, I can design a new logo for your yoga business in exchange for a few classes.', status: 'pending', createdAt: new Date('2023-10-21') },
 ];

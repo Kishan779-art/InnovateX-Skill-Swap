@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star, ArrowRight, MessageSquare } from 'lucide-react';
+import { Star, ArrowRight, MessageSquare, User as UserIcon } from 'lucide-react';
 
 interface UserCardProps {
   user: User;
@@ -13,11 +13,12 @@ interface UserCardProps {
 
 export function UserCard({ user, onRequestSwap }: UserCardProps) {
 
-  const averageRating = user.feedback.length > 0
+  const averageRating = user.feedback && user.feedback.length > 0
     ? (user.feedback.reduce((acc, f) => acc + f.rating, 0) / user.feedback.length).toFixed(1)
     : 'New';
 
   const getInitials = (name: string) => {
+    if (!name) return '??';
     const names = name.split(' ');
     if (names.length > 1) {
       return `${names[0][0]}${names[names.length - 1][0]}`;
@@ -30,13 +31,13 @@ export function UserCard({ user, onRequestSwap }: UserCardProps) {
         <Card className="glowing-card-content flex flex-col h-full bg-card/95 backdrop-blur-sm shadow-lg border-transparent">
             <CardHeader className="flex flex-col items-center text-center p-6">
                 <Avatar className="h-20 w-20 border-2 border-primary/50 mb-3">
-                    <AvatarImage src={user.profilePhotoUrl} alt={user.name} />
+                    <AvatarImage src={user.profilePhotoUrl} alt={user.name} data-ai-hint={user.data_ai_hint} />
                     <AvatarFallback className="text-2xl">{getInitials(user.name)}</AvatarFallback>
                 </Avatar>
                 <CardTitle className="text-xl font-headline leading-tight">{user.name}</CardTitle>
                  <div className="flex items-center gap-1 text-sm text-amber-500 mt-1">
                     <Star className="h-4 w-4 fill-current" />
-                    <span>{averageRating} ({user.feedback.length} reviews)</span>
+                    <span>{averageRating} ({user.feedback ? user.feedback.length : 0} reviews)</span>
                 </div>
             </CardHeader>
             <CardContent className="p-6 pt-0 flex-grow space-y-4">
@@ -67,7 +68,8 @@ export function UserCard({ user, onRequestSwap }: UserCardProps) {
             <CardFooter className="p-4 grid grid-cols-2 gap-2">
                 <Button asChild variant="outline" className="w-full">
                     <Link href={`/profile/${user.id}`}>
-                        View Profile
+                        <UserIcon className="mr-2 h-4 w-4" />
+                        Profile
                     </Link>
                 </Button>
                 <Button onClick={() => onRequestSwap(user)} className="w-full">

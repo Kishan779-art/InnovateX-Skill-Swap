@@ -9,15 +9,13 @@ export interface User {
   skillsWanted: string[];
   availability: 'weekends' | 'evenings' | 'weekdays' | string;
   profileStatus: 'public' | 'private';
-  feedback: Feedback[];
+  feedback?: Feedback[];
 }
 
 export interface Swap {
   id: string;
   requesterId: string;
-  requesterName: string;
   responderId: string;
-  responderName: string;
   offeredSkill: string;
   wantedSkill: string;
   message: string;
