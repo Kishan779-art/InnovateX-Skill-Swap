@@ -6,7 +6,7 @@ import { AnimatedBackground } from '@/components/layout/animated-background';
 import { PageTransition } from '@/components/layout/page-transition';
 
 export const metadata: Metadata = {
-  title: 'Synapse',
+  title: 'SkillSwap Connect',
   description: 'An application to offer your skills and exchange them with other users.',
 };
 
