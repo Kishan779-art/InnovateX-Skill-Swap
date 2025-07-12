@@ -112,7 +112,7 @@ export default function EditProfilePage() {
             </div>
           </div>
 
-          <Card>
+          <Card className="bg-card/50 backdrop-blur-md border border-primary/20">
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
               <CardDescription>This information will be displayed on your public profile.</CardDescription>
@@ -137,9 +137,11 @@ export default function EditProfilePage() {
                   control={form.control}
                   name="name"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl><Input placeholder="Your full name" {...field} /></FormControl>
+                    <FormItem className="floating-label-input">
+                      <FormControl>
+                        <Input placeholder=" " {...field} className="neon-input" />
+                      </FormControl>
+                      <label htmlFor={field.name}>Full Name</label>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -148,9 +150,11 @@ export default function EditProfilePage() {
                   control={form.control}
                   name="location"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl><Input placeholder="City, Country" {...field} /></FormControl>
+                    <FormItem className="floating-label-input">
+                      <FormControl>
+                        <Input placeholder=" " {...field} className="neon-input" />
+                      </FormControl>
+                      <label htmlFor={field.name}>Location</label>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -159,7 +163,7 @@ export default function EditProfilePage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-card/50 backdrop-blur-md border border-primary/20">
             <CardHeader>
               <div className="flex justify-between items-start">
                   <div>
@@ -208,7 +212,7 @@ export default function EditProfilePage() {
                         <FormLabel>Availability</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <SelectTrigger><SelectValue placeholder="Select your general availability" /></SelectTrigger>
+                            <SelectTrigger className="neon-input"><SelectValue placeholder="Select your general availability" /></SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="evenings">Evenings</SelectItem>
@@ -224,7 +228,7 @@ export default function EditProfilePage() {
                     control={form.control}
                     name="profileStatus"
                     render={({ field }) => (
-                      <FormItem className="flex flex-col rounded-lg border p-4">
+                      <FormItem className="flex flex-col rounded-lg border p-4 border-input bg-background/50 backdrop-blur-sm">
                         <FormLabel className="mb-2">Profile Visibility</FormLabel>
                         <div className="flex items-center space-x-2">
                            <FormControl>

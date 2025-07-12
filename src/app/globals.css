@@ -207,4 +207,23 @@ h1, h2, h3, h4, h5, h6 {
     @apply border-primary;
     box-shadow: 0 0 8px hsl(var(--primary)/0.6), inset 0 0 8px hsl(var(--primary)/0.4);
   }
+
+  .floating-label-input {
+    @apply relative;
+  }
+  
+  .floating-label-input > input {
+    @apply h-10;
+  }
+
+  .floating-label-input > label {
+    @apply absolute top-1/2 left-3 -translate-y-1/2 text-muted-foreground pointer-events-none transition-all duration-200 ease-out;
+  }
+
+  .floating-label-input > input:focus ~ label,
+  .floating-label-input > input:not(:placeholder-shown) ~ label {
+    @apply top-2 left-3 text-xs -translate-y-0 text-primary;
+    background-color: hsl(var(--card));
+    padding: 0 4px;
+  }
 }

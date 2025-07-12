@@ -8,7 +8,7 @@ import * as z from 'zod';
 import { motion } from 'framer-motion';
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Fingerprint } from 'lucide-react';
@@ -75,11 +75,11 @@ export default function LoginPage() {
                 control={form.control}
                 name="email"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-muted-foreground">Email Address</FormLabel>
+                  <FormItem className="floating-label-input">
                     <FormControl>
-                      <Input placeholder="name@example.com" {...field} className="neon-input"/>
+                      <Input placeholder=" " {...field} className="neon-input"/>
                     </FormControl>
+                     <label htmlFor={field.name}>Email Address</label>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -89,16 +89,20 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex items-center">
-                      <FormLabel className="text-muted-foreground">Password</FormLabel>
-                      <Link href="#" className="ml-auto inline-block text-sm text-primary/80 hover:text-primary hover:underline underline-offset-4">
-                        Forgot password?
-                      </Link>
+                     <div className="floating-label-input relative">
+                        <FormControl>
+                            <Input type="password" placeholder=" " {...field} className="neon-input" />
+                        </FormControl>
+                        <label htmlFor={field.name}>Password</label>
                     </div>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} className="neon-input" />
-                    </FormControl>
-                    <FormMessage />
+                    <div className="flex items-center mt-2">
+                        <div className='flex-grow'>
+                            <FormMessage />
+                        </div>
+                        <Link href="#" className="ml-auto inline-block text-sm text-primary/80 hover:text-primary hover:underline underline-offset-4">
+                            Forgot password?
+                        </Link>
+                    </div>
                   </FormItem>
                 )}
               />
