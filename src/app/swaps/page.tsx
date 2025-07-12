@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { mockSwaps, mockUsers } from '@/lib/data';
-import type { Swap } from '@/lib/types';
+import type { Swap, User } from '@/lib/types';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Check, Trash2, X } from 'lucide-react';
+import { ArrowRight, Check, Trash2, X, Users, MessageSquare } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,83 +34,104 @@ const getStatusVariant = (status: Swap['status']): "default" | "secondary" | "de
     }
 }
 
+const getInitials = (name: string) => {
+    if (!name) return '??';
+    const names = name.split(' ');
+    if (names.length > 1) {
+      return `${names[0][0]}${names[names.length - 1][0]}`;
+    }
+    return name.substring(0, 2);
+};
 
 const SwapCard = ({ swap, onAction }: { swap: Swap, onAction: (swapId: string, action: 'accept' | 'reject' | 'delete') => void }) => {
     const isResponder = swap.responderId === MOCK_CURRENT_USER_ID;
     const isRequester = swap.requesterId === MOCK_CURRENT_USER_ID;
+    
     const otherUser = isResponder 
         ? mockUsers.find(u => u.id === swap.requesterId) 
         : mockUsers.find(u => u.id === swap.responderId);
 
-    const getInitials = (name: string) => {
-        const names = name.split(' ');
-        if (names.length > 1) {
-          return `${names[0][0]}${names[names.length - 1][0]}`;
-        }
-        return name.substring(0, 2);
-    };
-
+    if (!otherUser) {
+        // This can happen if a user is deleted. We'll render a placeholder.
+        return (
+            <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border border-dashed shadow-none">
+                <CardHeader>
+                    <CardTitle className="text-sm font-medium text-muted-foreground">Swap with a deleted user</CardTitle>
+                    <Badge variant="destructive">Invalid</Badge>
+                </CardHeader>
+                <CardContent className="flex-grow flex items-center justify-center">
+                    <p className="text-muted-foreground text-sm">This swap can no longer be completed.</p>
+                </CardContent>
+            </Card>
+        );
+    }
+    
     return (
-        <div className="glowing-card">
-            <div className="glowing-card-content p-px">
-                <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-none shadow-none rounded-[calc(var(--radius)-1px)]">
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Swap with {otherUser?.name}</CardTitle>
-                        <Badge variant={getStatusVariant(swap.status)} className="capitalize">{swap.status}</Badge>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="flex items-center justify-between gap-2 text-center">
-                            <div className="flex-1">
-                                <p className="text-xs text-muted-foreground">{isRequester ? 'You Offer' : `${otherUser?.name} Offers`}</p>
-                                <p className="font-semibold">{swap.offeredSkill}</p>
-                            </div>
-                            <ArrowRight className="h-5 w-5 text-muted-foreground flex-shrink-0" />
-                            <div className="flex-1">
-                                <p className="text-xs text-muted-foreground">{isResponder ? 'You Get' : `${otherUser?.name} Gets`}</p>
-                                <p className="font-semibold">{swap.wantedSkill}</p>
-                            </div>
-                        </div>
-                        <div className="text-sm text-muted-foreground border-l-2 pl-3 italic">
-                            {swap.message}
-                        </div>
-                        <div className="text-xs text-muted-foreground text-right">
-                            {swap.createdAt.toLocaleDateString()}
-                        </div>
-                    </CardContent>
-                    {swap.status === 'pending' && (
-                        <CardFooter className="flex justify-end gap-2">
-                            {isResponder && (
-                                <>
-                                    <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
-                                    <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
-                                </>
-                            )}
-                            {isRequester && (
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <Button variant="destructive" size="sm"><Trash2 className="mr-1 h-4 w-4"/> Delete</Button>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                        <AlertDialogDescription>
-                                            This will permanently delete your swap request. This action cannot be undone.
-                                        </AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                        <AlertDialogAction onClick={() => onAction(swap.id, 'delete')}>
-                                            Yes, delete it
-                                        </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-                            )}
-                        </CardFooter>
+        <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-none shadow-md">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                <div className="flex items-center gap-3">
+                    <Avatar>
+                        <AvatarImage src={otherUser.profilePhotoUrl} />
+                        <AvatarFallback>{getInitials(otherUser.name)}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                        <CardTitle className="text-base font-semibold">{otherUser.name}</CardTitle>
+                        <p className="text-xs text-muted-foreground">{isRequester ? 'You sent a request' : 'You received a request'}</p>
+                    </div>
+                </div>
+                <Badge variant={getStatusVariant(swap.status)} className="capitalize">{swap.status}</Badge>
+            </CardHeader>
+            <CardContent className="space-y-4 flex-grow">
+                <div className="flex items-center justify-between gap-2 text-center p-3 bg-muted/50 rounded-md">
+                    <div className="flex-1">
+                        <p className="text-xs text-muted-foreground">{isRequester ? 'You Offer' : `${otherUser.name} Offers`}</p>
+                        <p className="font-semibold">{swap.offeredSkill}</p>
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-primary flex-shrink-0" />
+                    <div className="flex-1">
+                        <p className="text-xs text-muted-foreground">{isResponder ? 'You Receive' : `${otherUser.name} Receives`}</p>
+                        <p className="font-semibold">{swap.wantedSkill}</p>
+                    </div>
+                </div>
+                {swap.message && (
+                    <div className="text-sm text-muted-foreground border-l-2 border-primary pl-3 italic flex gap-2">
+                         <MessageSquare className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        "{swap.message}"
+                    </div>
+                )}
+            </CardContent>
+            {swap.status === 'pending' && (
+                <CardFooter className="flex justify-end gap-2">
+                    {isResponder && (
+                        <>
+                            <Button variant="outline" size="sm" onClick={() => onAction(swap.id, 'reject')}><X className="mr-1 h-4 w-4"/> Reject</Button>
+                            <Button size="sm" onClick={() => onAction(swap.id, 'accept')}><Check className="mr-1 h-4 w-4"/> Accept</Button>
+                        </>
                     )}
-                </Card>
-            </div>
-        </div>
+                    {isRequester && (
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" size="sm"><Trash2 className="mr-1 h-4 w-4"/> Delete Request</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    This will permanently delete your swap request. This action cannot be undone.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => onAction(swap.id, 'delete')}>
+                                    Yes, delete it
+                                </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    )}
+                </CardFooter>
+            )}
+        </Card>
     )
 };
 
@@ -127,8 +148,8 @@ export default function SwapsPage() {
             return currentSwaps.map(s => s.id === swapId ? { ...s, status: action === 'accept' ? 'accepted' : 'rejected' } : s);
         });
         toast({
-            title: `Request ${action === 'delete' ? 'deleted' : action + 'ed'}`,
-            description: `The swap request has been successfully ${action === 'delete' ? 'deleted' : action + 'ed'}.`,
+            title: `Request ${action === 'delete' ? 'deleted' : (action + 'ed')}`,
+            description: `The swap request has been successfully ${action === 'delete' ? 'deleted' : (action + 'ed')}.`,
         });
     }
 
@@ -168,8 +189,9 @@ export default function SwapsPage() {
                                 }
                             </div>
                         ) : (
-                            <div className="text-center py-16 rounded-lg bg-muted/30">
-                                <p className="text-muted-foreground">No {tab.label.toLowerCase()} requests.</p>
+                            <div className="text-center py-16 rounded-lg bg-card/50 mt-4">
+                                <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                                <p className="mt-4 text-muted-foreground">No {tab.label.toLowerCase()} requests.</p>
                             </div>
                         )}
                     </TabsContent>

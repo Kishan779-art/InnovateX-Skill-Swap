@@ -1,16 +1,17 @@
 import Link from 'next/link';
 import type { User } from '@/lib/types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Star } from 'lucide-react';
+import { Star, ArrowRight, MessageSquare } from 'lucide-react';
 
 interface UserCardProps {
   user: User;
+  onRequestSwap: (user: User) => void;
 }
 
-export function UserCard({ user }: UserCardProps) {
+export function UserCard({ user, onRequestSwap }: UserCardProps) {
 
   const averageRating = user.feedback.length > 0
     ? (user.feedback.reduce((acc, f) => acc + f.rating, 0) / user.feedback.length).toFixed(1)
@@ -25,51 +26,56 @@ export function UserCard({ user }: UserCardProps) {
   };
 
   return (
-    <div className="glowing-card">
-      <div className="glowing-card-content p-px">
-        <Card className="flex flex-col h-full bg-card/95 backdrop-blur-sm border-none shadow-none rounded-[calc(var(--radius)-1px)]">
-            <CardHeader className="flex flex-row items-center gap-4 p-4">
-                <Avatar className="h-16 w-16 border-2 border-primary/50">
-                <AvatarImage src={user.profilePhotoUrl} alt={user.name} />
-                <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
+    <div className="glowing-card h-full">
+        <Card className="glowing-card-content flex flex-col h-full bg-card/95 backdrop-blur-sm shadow-lg border-transparent">
+            <CardHeader className="flex flex-col items-center text-center p-6">
+                <Avatar className="h-20 w-20 border-2 border-primary/50 mb-3">
+                    <AvatarImage src={user.profilePhotoUrl} alt={user.name} />
+                    <AvatarFallback className="text-2xl">{getInitials(user.name)}</AvatarFallback>
                 </Avatar>
-                <div className="flex-1">
-                <CardTitle className="text-lg font-headline leading-tight">{user.name}</CardTitle>
-                <div className="flex items-center gap-1 text-sm text-amber-500 mt-1">
+                <CardTitle className="text-xl font-headline leading-tight">{user.name}</CardTitle>
+                 <div className="flex items-center gap-1 text-sm text-amber-500 mt-1">
                     <Star className="h-4 w-4 fill-current" />
-                    <span>{averageRating} ({user.feedback.length})</span>
-                </div>
+                    <span>{averageRating} ({user.feedback.length} reviews)</span>
                 </div>
             </CardHeader>
-            <CardContent className="p-4 flex-grow space-y-3">
-                <div>
-                <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Offers</h4>
-                <div className="flex flex-wrap gap-1.5">
-                    {user.skillsOffered.slice(0, 3).map(skill => (
-                    <Badge key={skill} variant="secondary">{skill}</Badge>
-                    ))}
-                    {user.skillsOffered.length > 3 && <Badge variant="outline">+{user.skillsOffered.length - 3} more</Badge>}
+            <CardContent className="p-6 pt-0 flex-grow space-y-4">
+                <div className="text-center">
+                    <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Offers</h4>
+                    <div className="flex flex-wrap gap-1.5 justify-center">
+                        {user.skillsOffered.slice(0, 3).map(skill => (
+                        <Badge key={skill} variant="secondary">{skill}</Badge>
+                        ))}
+                        {user.skillsOffered.length > 3 && <Badge variant="outline">+{user.skillsOffered.length - 3}</Badge>}
+                    </div>
                 </div>
+                 <div className="flex items-center justify-center text-muted-foreground">
+                    <hr className="w-8 border-border" />
+                    <ArrowRight className="h-4 w-4 mx-2 text-primary" />
+                    <hr className="w-8 border-border" />
                 </div>
-                <div>
-                <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Wants</h4>
-                <div className="flex flex-wrap gap-1.5">
-                    {user.skillsWanted.slice(0, 3).map(skill => (
-                    <Badge key={skill} variant="outline">{skill}</Badge>
-                    ))}
-                    {user.skillsWanted.length > 3 && <Badge variant="outline">+{user.skillsWanted.length - 3} more</Badge>}
-                </div>
+                <div className="text-center">
+                    <h4 className="text-xs font-semibold uppercase text-muted-foreground mb-2">Wants</h4>
+                    <div className="flex flex-wrap gap-1.5 justify-center">
+                        {user.skillsWanted.slice(0, 3).map(skill => (
+                        <Badge key={skill} variant="outline">{skill}</Badge>
+                        ))}
+                        {user.skillsWanted.length > 3 && <Badge variant="outline">+{user.skillsWanted.length - 3}</Badge>}
+                    </div>
                 </div>
             </CardContent>
-            <div className="p-4 pt-0">
-                <Button asChild variant="liquid" className="w-full">
+            <CardFooter className="p-4 grid grid-cols-2 gap-2">
+                <Button asChild variant="outline" className="w-full">
                     <Link href={`/profile/${user.id}`}>
-                        <span>View Profile</span>
+                        View Profile
                     </Link>
                 </Button>
-            </div>
+                <Button onClick={() => onRequestSwap(user)} className="w-full">
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Request
+                </Button>
+            </CardFooter>
         </Card>
-      </div>
     </div>
   );
 }

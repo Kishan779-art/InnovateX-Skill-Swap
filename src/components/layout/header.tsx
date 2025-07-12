@@ -62,7 +62,7 @@ export function Header() {
   ];
 
   return (
-    <header className="bg-card/80 backdrop-blur-sm border-b sticky top-0 z-50">
+    <header className="bg-background/80 backdrop-blur-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Share2 className="h-7 w-7 text-primary" />
@@ -100,7 +100,7 @@ export function Header() {
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="right">
+            <SheetContent side="right" className="bg-background">
               <div className="flex flex-col gap-6 p-6">
                 <Link href="/" className="flex items-center gap-2">
                     <Share2 className="h-6 w-6 text-primary" />
