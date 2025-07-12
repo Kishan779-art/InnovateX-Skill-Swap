@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Star, MapPin, Calendar, MessageSquare } from 'lucide-react';
 import { RequestSwapModal } from '@/components/request-swap-modal';
 
-const MOCK_CURRENT_USER_ID = 'u2'; // In a real app, this would come from an auth context
+const MOCK_CURRENT_USER_ID = 'u1'; // In a real app, this would come from an auth context
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 20 },

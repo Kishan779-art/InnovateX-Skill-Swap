@@ -13,17 +13,17 @@ const useAuth = () => {
 
   useEffect(() => {
     // This is just for demonstration. In a real app, you would check a token, etc.
-    // For now, we simulate the user being logged out initially.
-    // To test logged-in state, you could use localStorage or a simple toggle.
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const loggedIn = typeof window !== 'undefined' && localStorage.getItem('isLoggedIn') === 'true';
     setIsAuthenticated(loggedIn);
-  }, []);
+    
+    const handleStorageChange = () => {
+      const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      setIsAuthenticated(loggedIn);
+    };
 
-  const login = () => {
-    localStorage.setItem('isLoggedIn', 'true');
-    setIsAuthenticated(true);
-    window.dispatchEvent(new Event("storage")); // to notify other components
-  };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
@@ -31,18 +31,7 @@ const useAuth = () => {
     window.dispatchEvent(new Event("storage"));
   };
   
-  // This is a hacky way to re-render when auth state changes in another tab
-  useEffect(() => {
-    const onStorage = () => {
-        const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
-        setIsAuthenticated(loggedIn);
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
-
-
-  return { isAuthenticated, login, logout };
+  return { isAuthenticated, logout };
 };
 
 export function Header() {
