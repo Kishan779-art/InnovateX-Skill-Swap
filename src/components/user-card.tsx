@@ -8,10 +8,9 @@ import { Star, ArrowRight, MessageSquare, User as UserIcon } from 'lucide-react'
 
 interface UserCardProps {
   user: User;
-  onRequestSwap: (user: User) => void;
 }
 
-export function UserCard({ user, onRequestSwap }: UserCardProps) {
+export function UserCard({ user }: UserCardProps) {
 
   const averageRating = user.feedback && user.feedback.length > 0
     ? (user.feedback.reduce((acc, f) => acc + f.rating, 0) / user.feedback.length).toFixed(1)
@@ -72,9 +71,11 @@ export function UserCard({ user, onRequestSwap }: UserCardProps) {
                         Profile
                     </Link>
                 </Button>
-                <Button onClick={() => onRequestSwap(user)} className="w-full">
-                    <MessageSquare className="mr-2 h-4 w-4" />
-                    Request
+                <Button asChild className="w-full">
+                    <Link href={`/request/${user.id}`}>
+                        <MessageSquare className="mr-2 h-4 w-4" />
+                        Request
+                    </Link>
                 </Button>
             </CardFooter>
         </Card>
