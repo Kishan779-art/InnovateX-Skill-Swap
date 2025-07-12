@@ -21,7 +21,7 @@ const containerVariants = {
   visible: {
     transition: {
       staggerChildren: 0.05,
-      delayChildren: 0.4, // Start staggering after the search bar appears
+      delayChildren: 0.2, // Faster start for cards
     },
   },
 };
@@ -176,8 +176,6 @@ export default function Home() {
                 <motion.div
                   key={user.id}
                   variants={itemVariants}
-                  whileInView="visible"
-                  initial="hidden"
                 >
                   <UserCard user={user} onRequestSwap={handleRequestSwap} />
                 </motion.div>
