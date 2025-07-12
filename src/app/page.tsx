@@ -21,7 +21,6 @@ const containerVariants = {
   visible: {
     transition: {
       staggerChildren: 0.05,
-      delayChildren: 0.2, // Faster start for cards
     },
   },
 };
@@ -176,6 +175,8 @@ export default function Home() {
                 <motion.div
                   key={user.id}
                   variants={itemVariants}
+                  whileInView="visible"
+                  viewport={{ once: false }} // Changed to false to allow re-animation on page change
                 >
                   <UserCard user={user} onRequestSwap={handleRequestSwap} />
                 </motion.div>
