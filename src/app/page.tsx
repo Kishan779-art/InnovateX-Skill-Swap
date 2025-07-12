@@ -21,6 +21,7 @@ const containerVariants = {
   visible: {
     transition: {
       staggerChildren: 0.05,
+      delayChildren: 0.4, // Start staggering after the search bar appears
     },
   },
 };
@@ -99,7 +100,7 @@ export default function Home() {
           className="text-center"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.5, ease: 'easeOut' }}
         >
           <h1 className="text-4xl font-headline font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
             Connect & Grow
@@ -113,7 +114,7 @@ export default function Home() {
           className="p-6 bg-card/50 backdrop-blur-sm rounded-lg shadow-lg border border-primary/20"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div className="md:col-span-2">
@@ -175,6 +176,8 @@ export default function Home() {
                 <motion.div
                   key={user.id}
                   variants={itemVariants}
+                  whileInView="visible"
+                  initial="hidden"
                 >
                   <UserCard user={user} onRequestSwap={handleRequestSwap} />
                 </motion.div>
