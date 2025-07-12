@@ -2,7 +2,7 @@
 
 Welcome to the official GitHub repository for **InnovateX**, a team of passionate innovators building impactful solutions with modern web technologies. This repository hosts the source code for our interactive and visually striking portfolio website, which showcases our work, skills, and collaboration.
 
-🔗 **Live Website:** [Visit InnovateX](https://9000-firebase-studio-1752294766516.cluster-6dx7corvpngoivimwvvljgokdw.cloudworkstations.dev)
+🔗 **Live Website:** [Visit InnovateX](https://studio--skillswap-connect-214ea.us-central1.hosted.app/)
 
 ---
 
