@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { mockUsers, mockFeedback } from '@/lib/data';
 import type { User, Feedback } from '@/lib/types';
 import { notFound } from 'next/navigation';
@@ -12,6 +13,18 @@ import { Star, MapPin, Calendar, MessageSquare } from 'lucide-react';
 import { RequestSwapModal } from '@/components/request-swap-modal';
 
 const MOCK_CURRENT_USER_ID = 'u2'; // In a real app, this would come from an auth context
+
+const sectionVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.2,
+      duration: 0.5,
+    },
+  }),
+};
 
 export default function PublicProfilePage({ params }: { params: { userId: string } }) {
   const [user, setUser] = useState<User | null>(null);
@@ -36,9 +49,6 @@ export default function PublicProfilePage({ params }: { params: { userId: string
 
   if (!user) {
     // In a real app, you might show a loading skeleton here
-    // For now, if not found after effect, assume not found.
-    // A slight delay might be needed for the effect to run on client.
-    // A better approach would be a dedicated loading state.
     const userExists = mockUsers.some(u => u.id === params.userId);
     if (!userExists) {
       notFound();
@@ -64,7 +74,12 @@ export default function PublicProfilePage({ params }: { params: { userId: string
       <div className="max-w-4xl mx-auto">
         <Card className="overflow-hidden">
           <div className="bg-muted/40 p-8">
-            <div className="flex flex-col md:flex-row items-center gap-6">
+            <motion.div 
+              className="flex flex-col md:flex-row items-center gap-6"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
               <Avatar className="h-32 w-32 border-4 border-background shadow-lg">
                 <AvatarImage src={user.profilePhotoUrl} alt={user.name} />
                 <AvatarFallback className="text-4xl">{getInitials(user.name)}</AvatarFallback>
@@ -89,30 +104,49 @@ export default function PublicProfilePage({ params }: { params: { userId: string
                     Request Swap
                 </Button>
               </div>
-            </div>
+            </motion.div>
           </div>
           
           <CardContent className="p-6 grid md:grid-cols-2 gap-8">
-            <div>
+            <motion.div
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.5 }}
+              custom={0}
+            >
               <h3 className="text-lg font-semibold font-headline mb-3">Skills Offered</h3>
               <div className="flex flex-wrap gap-2">
                 {user.skillsOffered.map(skill => (
                   <Badge key={skill} className="text-sm py-1 px-3">{skill}</Badge>
                 ))}
               </div>
-            </div>
-            <div>
+            </motion.div>
+            <motion.div
+              variants={sectionVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.5 }}
+              custom={1}
+            >
               <h3 className="text-lg font-semibold font-headline mb-3">Skills Wanted</h3>
               <div className="flex flex-wrap gap-2">
                 {user.skillsWanted.map(skill => (
                   <Badge key={skill} variant="secondary" className="text-sm py-1 px-3">{skill}</Badge>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </CardContent>
         </Card>
 
-        <div className="mt-8">
+        <motion.div 
+          className="mt-8"
+          variants={sectionVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          custom={2}
+        >
             <h2 className="text-2xl font-bold font-headline mb-4">Feedback & Reviews</h2>
             <div className="space-y-4">
                 {user.feedback.length > 0 ? user.feedback.map(fb => (
@@ -144,7 +178,7 @@ export default function PublicProfilePage({ params }: { params: { userId: string
                     </Card>
                 )}
             </div>
-        </div>
+        </motion.div>
       </div>
       {currentUser && (
         <RequestSwapModal 

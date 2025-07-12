@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import type { User } from '@/lib/types';
 import { mockUsers } from '@/lib/data';
 import { UserCard } from '@/components/user-card';
@@ -9,18 +10,51 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Search, Users } from 'lucide-react';
 import { RequestSwapModal } from '@/components/request-swap-modal';
+import { UserCardSkeleton } from '@/components/user-card-skeleton';
 
 const USERS_PER_PAGE = 8;
 const MOCK_CURRENT_USER_ID = 'u1';
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.05,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
+
+
 export default function Home() {
-  const [users] = useState<User[]>(mockUsers.filter(u => u.profileStatus === 'public'));
-  const [currentUser] = useState<User | null>(mockUsers.find(u => u.id === MOCK_CURRENT_USER_ID) || null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [skillSearch, setSkillSearch] = useState('');
   const [availabilityFilter, setAvailabilityFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    // Simulate data fetching
+    setTimeout(() => {
+      setUsers(mockUsers.filter(u => u.profileStatus === 'public'));
+      setCurrentUser(mockUsers.find(u => u.id === MOCK_CURRENT_USER_ID) || null);
+      setIsLoading(false);
+    }, 1500);
+  }, []);
+
 
   const handleRequestSwap = (user: User) => {
     setSelectedUser(user);
@@ -55,16 +89,26 @@ export default function Home() {
   return (
     <>
       <div className="space-y-8">
-        <div className="text-center animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <motion.div 
+          className="text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <h1 className="text-4xl font-headline font-bold tracking-tight text-primary sm:text-5xl lg:text-6xl">
             Connect & Grow
           </h1>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             Discover talented individuals, exchange skills, and build your network.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="p-6 bg-card/50 backdrop-blur-sm rounded-lg shadow-lg border animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <motion.div 
+          className="p-6 bg-card/50 backdrop-blur-sm rounded-lg shadow-lg border"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div className="md:col-span-2">
               <label htmlFor="skill-search" className="block text-sm font-medium text-foreground mb-1">Search by skill</label>
@@ -104,22 +148,37 @@ export default function Home() {
               </Select>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {paginatedUsers.length > 0 ? (
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: USERS_PER_PAGE }).map((_, index) => (
+              <UserCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : paginatedUsers.length > 0 ? (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {paginatedUsers.map((user, index) => (
-                <div
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {paginatedUsers.map((user) => (
+                <motion.div
                   key={user.id}
-                  className="animate-fade-in-up"
-                  style={{ animationDelay: `${0.4 + index * 0.05}s`, animationFillMode: 'both' }}
+                  variants={itemVariants}
                 >
                   <UserCard user={user} onRequestSwap={handleRequestSwap} />
-                </div>
+                </motion.div>
               ))}
-            </div>
-            <div className="flex justify-center items-center gap-4 animate-fade-in">
+            </motion.div>
+            <motion.div 
+              className="flex justify-center items-center gap-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
               <Button onClick={handlePrevPage} disabled={currentPage === 1} variant="liquid">
                 <span>Previous</span>
               </Button>
@@ -129,14 +188,19 @@ export default function Home() {
               <Button onClick={handleNextPage} disabled={currentPage === totalPages} variant="liquid">
                 <span>Next</span>
               </Button>
-            </div>
+            </motion.div>
           </>
         ) : (
-          <div className="text-center py-16 animate-fade-in">
+          <motion.div 
+            className="text-center py-16"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+          >
               <Users className="mx-auto h-12 w-12 text-muted-foreground" />
               <h3 className="mt-4 text-lg font-medium">No Users Found</h3>
               <p className="text-muted-foreground mt-1">Try adjusting your search filters.</p>
-          </div>
+          </motion.div>
         )}
       </div>
        {currentUser && selectedUser && (

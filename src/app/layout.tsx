@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Header } from '@/components/layout/header';
 import { AnimatedBackground } from '@/components/layout/animated-background';
+import { PageTransition } from '@/components/layout/page-transition';
 
 export const metadata: Metadata = {
   title: 'SkillSwap Connect',
@@ -15,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" style={{colorScheme: 'light'}} suppressHydrationWarning>
+    <html lang="en" style={{colorScheme: 'dark'}} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -26,7 +27,9 @@ export default function RootLayout({
         <div className="relative z-10 flex flex-col min-h-screen">
           <Header />
           <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
+            <PageTransition>
+              {children}
+            </PageTransition>
           </main>
         </div>
         <Toaster />
